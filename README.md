@@ -175,5 +175,5 @@ Institute of Neuroscience (IoNS), UCLouvain, Brussels, Belgium.
 
 **Email:** cedric.lenoir@uclouvain.be
 
-**Version** 4.0.0, August 2026.
+**Version** 1.0.0, August 2026.
 
