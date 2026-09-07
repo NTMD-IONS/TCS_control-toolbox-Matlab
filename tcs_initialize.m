@@ -8,6 +8,7 @@
 % currently not included.
 % 
 % Created with MATLAB (R2024a) with Psychtoolbox (3-3.0.19.7) on Windows 11 (25H2).
+% Compatible with MATLAB 219b or later.
 % Author : Cédric Lenoir, Neuroscience Techniques and Methods Developement Platform (NeTMeD),
 % Email : cedric.lenoir@uclouvain.be
 % Institute of Neuroscience (IoNS), UCLouvain, Brussels, Belgium.
