@@ -4,7 +4,7 @@
 This repository provides a MATLAB library to control a **TCS (Thermal Cutaneous Stimulator)** device via serial (USB) communication.
 
 ## Prerequisites
-- MATLAB (tested with R2024a)
+- MATLAB R2019b or later (created with R2024a and tested with R2019b)
 - [Psychtoolbox](http://psychtoolbox.org/) (tested with version 3-3.0.19.7) — used for precise timing (`WaitSecs`)
 - Windows 11 (tested with 25H2); other OS may work but are untested
 - TCS device connected via USB
@@ -169,6 +169,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 **Created with** MATLAB (R2024a) with Psychtoolbox (3-3.0.19.7) on Windows 11 (25H2).
+
+**Compatible with** MATLAB R2019b or later.
 
 **Author:** Cédric Lenoir, Neuroscience Techniques and Methods Development Platform (NeTMeD),
 Institute of Neuroscience (IoNS), UCLouvain, Brussels, Belgium.
