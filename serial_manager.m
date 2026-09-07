@@ -3,6 +3,7 @@
 % Class "tcs_initialize" used to control the TCS device.
 %
 % Created with MATLAB (R2024a) with Psychtoolbox (3-3.0.19.7) on Windows 11 (25H2).
+% Compatible with MATLAB 2019b or later (serialportlist function is not available in earlier versions).
 % Author : Cédric Lenoir, Neuroscience Techniques and Methods Developement Platform (NeTMeD),
 % Email : cedric.lenoir@uclouvain.be
 % Institute of Neuroscience (IoNS), UCLouvain, Brussels, Belgium.
@@ -124,21 +125,21 @@ classdef serial_manager < handle
     methods (Access = private)
 
         function find_com(obj)
-            % Lists and finds the COM port, function used depend on MATLAB
-            % version (private function cannot be called directly)
+            % Lists and finds the COM port. The method send an error message 
+            % if the MATLAB version is prior to 2019b
+            % (private function cannot be called directly)
 
             % finds current Matlab version
             vMatlab = version('-release');
             vMatlab_year = str2double(vMatlab(1:4));
             vMatlab_release = vMatlab(end);
             % serialportlist introduced from R2019b
-            use_legacy = vMatlab_year < 2019 || (vMatlab_year == 2019 && strcmp(vMatlab_release, 'a'));
-            if use_legacy
-                info  = instrhwinfo('serial');
-                ports = info.SerialPorts;   % cell array
-            else
-                ports = serialportlist("available");   % string array
+            if vMatlab_year < 2019 || (vMatlab_year == 2019 && strcmp(vMatlab_release, 'a'))
+                error('serialportlist function is not available in this Matlab version. Please update to R2019b or later.')
             end
+                
+            ports = serialportlist("available");   % string array
+            
             if isempty(ports)
                 error('No COM port found.')
             end
