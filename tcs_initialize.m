@@ -13,7 +13,7 @@
 % Email : cedric.lenoir@uclouvain.be
 % Institute of Neuroscience (IoNS), UCLouvain, Brussels, Belgium.
 % Copyright (c) 2026 Université catholique de Louvain (UCLouvain)
-% Licensed under the MIT License. See LICENSE file for details.
+% Licensed under the GNU GPLv3 License. See LICENSE file for details.
 % Version 1.0.0, August 2026.//
 
 classdef tcs_initialize < serial_manager
