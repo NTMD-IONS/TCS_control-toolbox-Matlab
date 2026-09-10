@@ -165,7 +165,7 @@ help tcs_initialize.get_battery
 ## License
 *Copyright (c) 2026 Université catholique de Louvain (UCLouvain)*
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU GPLv3 License - see the [LICENSE](LICENSE) file for details.
 
 ---
 **Created with** MATLAB (R2024a) with Psychtoolbox (3-3.0.19.7) on Windows 11 (25H2).
