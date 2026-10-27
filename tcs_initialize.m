@@ -27,6 +27,8 @@ classdef tcs_initialize < serial_manager
         filter_level = "";
         wait_duration = "";
         temperature_feedback_state = "";
+        T = "";
+        TN = "";
     end
 
     methods
@@ -59,6 +61,9 @@ classdef tcs_initialize < serial_manager
             pc_name = char(java.net.InetAddress.getLocalHost().getHostName());
             obj.get_battery;
             pause(0.001);
+            if isnan(obj.battery_level)
+                return
+            end
             obj.get_mri_filter;
             pause(0.001);
             v = obj.get_library_version;
@@ -147,7 +152,7 @@ classdef tcs_initialize < serial_manager
         function get_error(obj)
             % obj.get_error;
             % Gets the error state of the TCS device, for each zone of the
-            % probe, the output error is a shared property.
+            % probe "+ neutral", the output error is a shared property.
             obj.mute_temperature_display;
             pause(0.001);
             obj.flush;
@@ -269,7 +274,9 @@ classdef tcs_initialize < serial_manager
 
         function timedate = get_time_date(obj)
             % timedate = obj.get_time_date;
-            % Displays the time and date from the TCS device.
+            % Initializes the time and date counter at first call.
+            % Subsequent calls display the time and date measured by the TCS
+            % device from the first call.
             obj.mute_temperature_display;
             pause(0.001);
             obj.flush;
@@ -350,7 +357,9 @@ classdef tcs_initialize < serial_manager
             % defines a wait period + safety maring of 50 ms, before
             % sending command to get temperature feedback
             % computes the ramp_T2TN time
-            timeT2TN = abs(T-TN)/ramp_T2TN;
+            obj.T = T;
+            obj.TN = TN;
+            timeT2TN = abs(obj.T-obj.TN)/ramp_T2TN;
             obj.wait_duration = duration/1000 + timeT2TN + 0.05;
             % Adjusts temperature feedback duration if feedback requested
             if feedback_state == true
@@ -367,17 +376,17 @@ classdef tcs_initialize < serial_manager
                 return;
             end
             if obj.verbosity == 1
-                disp("Plateau time: " + (duration - abs(T-TN)*1000/ramp_TN2T) + " ms");
+                disp("Plateau time: " + (duration - abs(obj.T-obj.TN)*1000/ramp_TN2T) + " ms");
             end
             % disables profile mode
             obj.set_profile_zones(00000);
             pause(0.001);
             % sets neutral temperature
-            obj.send(['N' obj.format_xxxx_string(TN*10, 3, [200 400])]); pause(0.001);
+            obj.send(['N' obj.format_xxxx_string(obj.TN*10, 3, [200 400])]); pause(0.001);
             % sets target temperature
             indiv_zone = regexp(sprintf('%05d', zones),'1');
             for izone = 1:size(indiv_zone,2)
-                obj.send(['C' num2str(indiv_zone(1,izone)) obj.format_xxxx_string(T*10, 3, [100 700])]); pause(0.001);
+                obj.send(['C' num2str(indiv_zone(1,izone)) obj.format_xxxx_string(obj.T*10, 3, [100 700])]); pause(0.001);
                 % sets duration (rise time + plateau)
                 obj.send(['D' num2str(indiv_zone(1,izone)) obj.format_xxxx_string(duration, 5, [1 99999])]); pause(0.001);
                 % sets ramp_TN2T
@@ -392,6 +401,7 @@ classdef tcs_initialize < serial_manager
             % Sets only neutral / baseline temperature in °C ranging in
             % [20 to 40] °C.
             obj.send(['N' obj.format_xxxx_string(TN*10, 3, [200 400])]);
+            obj.TN = TN;
         end
 
         function set_max_temperature(obj, Tmax)
@@ -402,15 +412,16 @@ classdef tcs_initialize < serial_manager
             obj.send(['Om' obj.format_xxxx_string(Tmax*10,3,[100 700])]);
         end
 
-        function set_stimulation_temperature(obj, T)
+        function set_stimulation_temperature(obj, zones, T)
             % obj.set_stimulation_temperature(T);
             % Sets only the stimulation / target temperature between
             % [10 - 70] °C.
             obj.set_profile_zones(00000);
             pause(0.001);
             indiv_zone = regexp(sprintf('%05d', zones),'1');
+            obj.T = T;
             for izone = 1:size(indiv_zone,2)
-            obj.send(['C' num2str(indiv_zone(izone)) obj.format_xxxx_string(T*10, 3, [100 700])]);
+            obj.send(['C' num2str(indiv_zone(izone)) obj.format_xxxx_string(obj.T*10, 3, [100 700])]);
             pause(0.001);
             end
         end
@@ -430,7 +441,7 @@ classdef tcs_initialize < serial_manager
             % and specify the new zones and keep the previous zones activated (to "1").
 
             % (delay + safety margin of 50 ms to wait before asking for feedback)
-            timeT2TN = abs(T-TN)/ramp_T2TN;
+            timeT2TN = abs(obj.T-obj.TN)/ramp_T2TN;
             obj.wait_duration = duration/1000 + timeT2TN + 0.05;
             if feedback_state == true
                 obj.temperature_feedback_state = true;
